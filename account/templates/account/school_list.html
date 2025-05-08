@@ -1,0 +1,60 @@
+{% extends "partials/base.html" %}
+
+{% load static %}
+
+{% block title %}Dashboard{% endblock title %}
+
+{% block extra_css %}
+{% include "partials/head-css.html" %}
+{% endblock extra_css %}
+
+{% block pagetitle %}
+    {% include "partials/page-title.html" with pagetitle="Menu" title="Dashboard" %}
+{% endblock pagetitle %}
+
+{% block content %}
+<div class="card p-4 bg-white shadow-md rounded-lg">
+    <div class="overflow-x-auto">
+        <div class="inline-block min-w-full align-middle">
+            <div class="overflow-hidden relative">
+                <!-- Scrollable Table Container -->
+                <div id="table-container" class="max-h-96 overflow-y-auto border border-gray-300 rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600 uppercase">Student ID</th>
+                                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600 uppercase">School Name</th>
+                                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600 uppercase">Campus Name</th>
+                                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600 uppercase">Issue</th>
+                                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600 uppercase">Date</th>
+                                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600 uppercase">In/Out Time</th>
+                                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600 uppercase">Face Image</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                            {% for student in student_submission %}
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="px-4 py-3 text-sm text-gray-800">{{ student.student_ids | default:"N/A" }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-800">{{ student.school.name | default:"N/A" }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-800">{{ student.campus.name | default:"N/A" }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-800">{{ student.issue.title | default:"N/A" }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-800">{{ student.date | default:"N/A" }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-800">{{ student.in_time | default:"N/A" }} / {{ student.out_time | default:"N/A" }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-800">
+                                    <div class="relative w-12 h-12 overflow-hidden border border-gray-300 shadow-md rounded-lg">
+                                        <img src="{{ student.face_image.url }}" alt="Student Image" class="w-full h-full object-cover">
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}

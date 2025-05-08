@@ -1,0 +1,26 @@
+{% load static %}
+<div class="app-menu">
+
+    <!--- Menu -->
+    <div class="srcollbar" data-simplebar>
+        <ul class="menu" data-fc-type="accordion">
+            
+            <li class="menu-item">
+                <a href="{% url 'home' %}" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_home_3_line"></i></span>
+                    <span class="menu-text"> Dashboard </span>
+                </a>
+            </li>
+
+            <li class="menu-title">Apps</li>
+
+            <li class="menu-item">
+                <a href="{% url 'school_list' %}" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_calendar_line"></i></span>
+                    <span class="menu-text"> Submission </span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- Sidenav Menu End  -->

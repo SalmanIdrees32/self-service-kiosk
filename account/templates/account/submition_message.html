@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Submitted</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffffff;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            width: 350px;
+            position: relative;
+        }
+        .circle {
+            width: 100px;
+            height: 100px;
+            border: 8px solid #549a17; /* Border for the circle */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        .circle .tick {
+            color: #1ea115; /* Color of the tick */
+            font-size: 65px; /* Size of the tick */
+        }
+        h3 {
+            font-weight: bold;
+            color: #000;
+            margin: 10px 0;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #f4ebe9;
+            color: #000;
+            box-shadow: none;
+            outline: none;
+        }
+    </style>
+    <script type="text/javascript">
+        // Wait for the document to load
+        window.onload = function() {
+            // Set a timeout of 5 seconds (5000 milliseconds)
+            setTimeout(function() {
+                // Redirect to the chat bot page
+                window.location.href = "{% url 'chat_bot' %}";
+            }, 3000); // 5000 milliseconds = 5 seconds
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="circle">
+            <i class="fas fa-check tick"></i> <!-- Tick icon inside the circle -->
+        </div>
+        <h3>Your issue has been</h3>
+        <h3>submitted</h3>
+        <div class="option">
+            <span>Your ticket number is: {{ ticket_number }}</span>
+        </div>
+    </div>
+</body>
+</html>

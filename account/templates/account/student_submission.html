@@ -1,0 +1,865 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student ID, School, Campus, Issue, and Attendance Reconciliation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+
+        html {
+            overflow-y: scroll; /* Always show vertical scrollbar */
+        }
+
+        /* Common Styles */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffffff;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            width: 350px;
+            position: relative;
+        }
+        h3, p, h2 {
+            font-weight: bold;
+            color: #000;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 18px;
+        }
+        h3::after, p::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: 12px;
+            width: 350px;
+            height: 1.5px;
+            background-color: #e57357;
+            transform: translateX(-50%);
+        }
+        input[type="text"] {
+            padding: 15px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 10px;
+            width: 90%;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #fef6f4;
+            color: #000;
+            box-shadow: none;
+            outline: none;
+        }
+        input[type="submit"] {
+            padding: 15px;
+            margin-top: 20px;
+            width: 100%;
+            background-color: #f07c5a;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        input[type="submit"]:hover {
+            background-color: #e06440;
+        }
+        .school-box, .campus-list li {
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+            
+        }
+        .school-box:hover, .campus-list li:hover {
+            transform: scale(1.05);
+        }
+        
+        .school-box img, .campus-list li img {
+            width: 100%;
+            height: 90px;
+            object-fit: cover; /* Ensures the image covers the box properly */
+            border-radius: 8px;
+        }
+        .hidden {
+            display: none;
+        }
+        .campus-list {
+            list-style: none;
+            padding: 0;
+        }
+        .campus-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #eee5e5;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .campus-list li.active {
+            background: #f26649;
+            color: white;
+        }
+        .campus-list li img {
+            width: 75px;
+            height: 60px;
+            margin-left: 15px;
+        }
+        .selected-campus-image {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .selected-campus-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        /* Logo Styles */
+        .logo {
+            margin-bottom: -35px;
+        }
+        .logo img {
+            width: 200px; /* Adjust the size as needed */
+            height: 100px;
+            border-radius: 8px;
+        }
+        /* Updated Issue Selection Styles */
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 8px; /* Rounded corners */
+            width: 90%;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #f4ebe9; /* Light background */
+            color: #000; /* Default text color */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s; /* Smooth transitions */
+        }
+
+        .option:hover {
+            background-color: #f07c5a; /* Change background color on hover */
+            color: white; /* Change text color on hover */
+            transform: scale(1.05); /* Slightly enlarge on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Enhance shadow on hover */
+        }
+
+        .option.active {
+            background-color: #f07c5a; /* Active state background color */
+            color: white; /* Active state text color */
+        }
+
+        .option img {
+            width: 24px;
+            height: 24px;
+            border-radius: 5px;
+            margin-right: 10px;
+            transition: filter 0.3s; /* Smooth transition for image filter */
+        }
+
+        
+        .option i {
+            margin-right: 10px;
+        }
+        .attendance {
+            background-color: #e06440; /* Light red background */
+        }
+        .attendance i {
+            color: #f7f5f5; /* Red icon */
+        }
+        /* Attendance Reconciliation Styles */
+        .attendance-reconciliation {
+            max-width: 400px;
+            margin: 20px auto;
+            background: #fdf4f1;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .attendance-reconciliation h2 {
+            margin-bottom: 10px;
+            border-bottom: 2px solid red;
+            display: inline-block;
+            padding-bottom: 7px;
+            width: 440px;
+        }
+        .form-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-label {
+            text-align: left;
+            display: block;
+            font-weight: normal;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+        .form-group input, .form-group textarea {
+            width: 93%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .time-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .time-group div {
+            width: 45%;
+        }
+        .apply-date-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .save-btn {
+            background: #f26649;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 40%;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .save-btn:hover {
+            background: #d6553a;
+        }
+        /* Loader Styles */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loader.hidden {
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #f07c5a;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Face Recognition Page Styles */
+        .register-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        #camera-container {
+    margin-top: 20px;
+    text-align: center;
+    position: relative;
+    padding-top: 40px; /* Space for the heading */
+}
+
+#camera-container h4 {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+#video {
+    border-radius: 8px;
+    width: 100%;
+    height: auto;
+}
+
+#capture-button {
+    position: relative; /* Remove absolute positioning */
+    margin-top: 15px; /* Space button clearly below the video */
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#capture-button:hover {
+    background-color: #45a049;
+}
+
+        canvas {
+            display: none;
+        }
+
+        button[type="submit"] {
+            width: 35%;
+            padding: 12px;
+            background-color: #f07c5a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #9f5a45;
+        }
+
+        #message {
+            margin-top: 20px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 20px;
+                width: 90%;
+            }
+        }
+    </style>
+    <style>
+        /* Updated Dial Pad Styles */
+        .dial-pad-container {
+            position: absolute;
+            width: 100%;  /* Matches input field width */
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 5px;
+            
+            border-radius: 8px;
+            transition: opacity 0.3s, visibility 0.3s;
+            visibility: hidden;
+            opacity: 0;
+            z-index: 100;
+        }
+
+        /* When active, make it visible */
+        .dial-pad-container.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Positioning */
+        .container {
+            position: relative;
+            width: 350px;  /* Keep container width fixed */
+        }
+
+        /* Dial pad layout */
+        .dial-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        /* Dial pad buttons */
+        .dial-pad button {
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .dial-pad button:hover {
+            background-color: #f07c5a;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* Special buttons */
+        #backspace {
+            background-color: #f8f9fa;
+            color: #dc3545;
+        }
+
+        #close-dial {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
+    </style>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffffff;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            width: 350px;
+            position: relative;
+        }
+        .circle {
+            width: 100px;
+            height: 100px;
+            border: 8px solid #549a17; /* Border for the circle */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        .circle .tick {
+            color: #1ea115; /* Color of the tick */
+            font-size: 65px; /* Size of the tick */
+        }
+        h3 {
+            font-weight: bold;
+            color: #000;
+            margin: 10px 0;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 4px;
+            width: 90%;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #f4ebe9;
+            color: #000;
+            box-shadow: none;
+            outline: none;
+        }
+    </style>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</head>
+<body>
+    <!-- Loader -->
+    <div id="loader" class="loader hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Main Form -->
+    <form id="main-form" method="POST" action="{% url 'student_submission' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="submission_id" id="submission_id">
+
+        <div id="page1" class="container">
+            <h3>Please enter your Person Code or OBC ID</h3> <br>
+            <label for="student_ids" class="form-label" ><b>OBC ID</b></label>
+            <input type="text" id="student_ids" name="student_ids"  placeholder="Example: OBC2000000">
+        
+            <label for="student_id_4" class="form-label"><b>Person Code</b></label>
+            <input type="text" id="student_id_4" name="student_id_4"  placeholder="Example: 20000">
+            <br>
+            <input type="submit" id="submitID" value="Submit">
+        </div>
+
+        <!-- Dial Pad -->
+        <div class="dial-pad-container" >
+            <div class="dial-pad">
+                <button data-number="1">1</button>
+                <button data-number="2">2</button>
+                <button data-number="3">3</button>
+                <button data-number="4">4</button>
+                <button data-number="5">5</button>
+                <button data-number="6">6</button>
+                <button data-number="7">7</button>
+                <button data-number="8">8</button>
+                <button data-number="9">9</button>
+                <button data-number="0">0</button>
+                <button id="backspace"><i class="fas fa-backspace"></i></button>
+                <button id="close-dial">Close</button>
+            </div>
+        </div>
+
+        <!-- Font Awesome for Icons -->
+        
+
+        <!-- Page 2: School Selection -->
+        <div id="page2" class="container hidden">
+            <p>Select your school</p>
+            {% for school in school_list %}
+                <div class="school-box">
+                    <a href="{% url 'student_submission' %}?school={{ school.id }}#page3"><img src="{{ school.icon.url }}" name="school" alt="Oxford Business College"></a>
+                </div>
+            {% endfor %}
+            <input type="hidden" id="school" value="{{selected_school.id}}" name="school">
+        </div>
+
+        <!-- Page 3: Campus Selection -->
+        <div id="page3" class="container hidden">
+            <div class="logo" style="margin-bottom: 5px;">
+                <img src="{{selected_school.icon.url}}" alt="Oxford Business College">
+            </div>
+            <h3>Select your campus</h3>
+            <ul class="campus-list">
+                {% for campus in campus_list %}
+                    <li data-campus-id="{{ campus.id }}">
+                        {{ campus.name }}<img src="{{ campus.icon.url }}" alt="{{ campus.name }}">
+                    </li>
+                {% endfor %}
+            </ul>
+            <input type="hidden" id="campus" value="{{campus.id}}" name="campus">
+        </div>
+
+        <!-- Page 4: Issue Selection -->
+        <div id="page4" class="container hidden">
+            <h3>Select Your Issue</h3>
+            {% for issue in issue_list %}
+                <div class="option" data-issue-id="{{ issue.id }}">
+                    <img src="{{ issue.icon.url }}" alt="{{ issue.title }}">
+                    <span>{{ issue.title }}</span>
+                </div>
+            {% endfor %}
+            <input type="hidden" id="issue" value="{{ issue.id }}" name="issue">
+        </div>
+
+        <!-- Page 5: Attendance Reconciliation with Webcam Capture -->
+<div id="page5" class="container hidden">
+    <h3>Enter details and Capture Face</h3>
+    <div class="attendance-reconciliation">
+        <h4>Attendance Reconciliation</h4>
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+        </div>
+        <div class="form-group time-group">
+            <div>
+                <label for="in_time">In Time:</label>
+                <input type="time" id="in_time" name="in_time" required>
+            </div>
+            <div>
+                <label for="out_time">Out Time:</label>
+                <input type="time" id="out_time" name="out_time" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="4" placeholder="Type your message" required></textarea>
+        </div>
+
+        <!-- Webcam Integration -->
+        <div id="camera-container">
+            <h4>Capture Your Face</h4>
+            <video id="video" autoplay playsinline></video>
+            <button type="button" id="capture-button">Take Picture</button>
+            <canvas id="canvas" hidden></canvas>
+            <input type="file" name="face_image" id="face_image_input" hidden>
+        </div>
+
+        <div class="apply-date-container">
+            <h5 class="apply-date">Apply Date: {{ today|date:"d/m/Y" }}</h5>
+            <button type="submit" id="final-submit">Submit</button>
+        </div>
+    </div>
+</div>
+
+        
+    </form>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const studentId8Input = document.getElementById("student_ids");
+            const studentId4Input = document.getElementById("student_id_4");
+            const dialPadContainer = document.querySelector(".dial-pad-container");
+            const dialPadButtons = document.querySelectorAll(".dial-pad button");
+
+            let activeInput = null;
+
+            function positionDialPad() {
+                if (activeInput) {
+                    const rect = activeInput.getBoundingClientRect();
+                    dialPadContainer.style.top = `${rect.bottom + window.scrollY}px`;
+                    dialPadContainer.style.left = `${rect.left + window.scrollX}px`;
+                    dialPadContainer.style.width = `340px`;
+                }
+            }
+
+            function openDialPad(input) {
+                activeInput = input;
+                positionDialPad();
+                dialPadContainer.classList.add("active");
+            }
+
+            studentId8Input.addEventListener("click", () => openDialPad(studentId8Input));
+            studentId4Input.addEventListener("click", () => openDialPad(studentId4Input));
+
+            dialPadButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    const number = this.getAttribute("data-number");
+                    if (number) {
+                        if (activeInput === studentId8Input && studentId8Input.value.length < 8) {
+                            studentId8Input.value += number;
+                        } else if (activeInput === studentId4Input && studentId4Input.value.length < 5) {
+                            studentId4Input.value += number;
+                        }
+                    } else if (this.id === "backspace") {
+                        activeInput.value = activeInput.value.slice(0, -1);
+                    } else if (this.id === "close-dial") {
+                        dialPadContainer.classList.remove("active");
+                    }
+                });
+            });
+
+
+            document.addEventListener("click", function (event) {
+                if (!dialPadContainer.contains(event.target) && event.target !== studentId8Input && event.target !== studentId4Input) {
+                    dialPadContainer.classList.remove("active");
+                }
+            });
+        });
+
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Show specific page and hide others
+            function showPage(pageId) {
+                document.querySelectorAll(".container").forEach(page => {
+                    page.classList.toggle("hidden", page.id !== pageId);
+                });
+            }
+
+            function getCSRFToken() {
+                return document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
+            }
+
+            function navigateTo(pageId) {
+                const loader = document.getElementById("loader");
+                loader.classList.remove("hidden");
+
+                setTimeout(() => {
+                    loader.classList.add("hidden");
+                    history.pushState({ page: pageId }, "", `#${pageId}`);
+                    showPage(pageId);
+                }, 1000);
+            }
+
+            // Handle back/forward button navigation
+            window.addEventListener("popstate", event => {
+                showPage(event.state?.page || "page1");
+            });
+
+            // Show the correct page on page load
+            window.addEventListener("load", () => {
+                showPage(window.location.hash.substring(1) || "page1");
+            });
+
+            // Handle student ID submission
+            document.getElementById("submitID").addEventListener("click", event => {
+                event.preventDefault();
+
+                // Ensure the student ID values are captured
+                const studentID = document.getElementById("student_ids").value;
+                const student_id_4 = document.getElementById("student_id_4").value;
+                console.log(studentID, student_id_4);
+
+                // Check if the 8-digit ID is provided and valid
+                if (studentID.length === 8) {
+                    // Store the valid 8-digit student ID in local storage
+                    localStorage.setItem("student_ids", studentID);
+                }
+                // Check if the 4-digit ID is provided and valid
+                else if (student_id_4.length === 5) {
+                    // Store the valid 4-digit student ID in local storage
+                    localStorage.setItem("student_id_4", student_id_4);
+                } else {
+                    // If neither ID is valid, show an error message
+                    alert("Please enter a valid 8-digit OBC ID or 5-digit person code.");
+                    return;
+                }
+
+                // Proceed to next page
+                navigateTo("page2");
+            });
+
+            // Check if student IDs are stored in local storage
+            document.addEventListener("DOMContentLoaded", function () {
+                const storedStudentId = localStorage.getItem("student_ids");
+                const storedStudent_id_4 = localStorage.getItem("student_id_4");
+                if (storedStudentId) {
+                    document.getElementById("student_ids").value = storedStudentId;
+                    console.log(storedStudentId);
+                }
+                if (storedStudent_id_4) {
+                    document.getElementById("student_id_4").value = storedStudent_id_4;
+                    console.log(storedStudent_id_4);
+                }
+            });
+
+            // Handle final form submission when clicking the final submit button
+            document.getElementById("final-submit").addEventListener("click", function(event) {
+                event.preventDefault();
+
+                // Retrieve stored values
+                const studentIDs = localStorage.getItem("student_ids");
+                const studentID4 = localStorage.getItem("student_id_4");
+
+                // Check if a student ID exists before submitting
+                if (!studentIDs && !studentID4) {
+                    alert("Please enter and submit valid student IDs first.");
+                    return;
+                }
+
+                // Optional: Fill in the form fields with the stored data if not already done
+                if (studentIDs) {
+                    document.getElementById("student_ids").value = studentIDs;
+                }
+                if (studentID4) {
+                    document.getElementById("student_id_4").value = studentID4;
+                }
+
+                // Now, you can submit the form
+                document.getElementById("main-form").submit();
+
+                // Clear local storage after submission
+                localStorage.removeItem("student_ids");
+                localStorage.removeItem("student_id_4");
+            });
+
+            // Handle school selection
+            document.querySelectorAll(".school-box").forEach(box => {
+                box.addEventListener("click", function () {
+                    document.getElementById("school").value = this.getAttribute("data-school-id");
+                    navigateTo("page3");
+                });
+            });
+
+            // Handle campus selection
+            document.querySelectorAll(".campus-list li").forEach(item => {
+                item.addEventListener("click", function () {
+                    document.getElementById("campus").value = this.getAttribute("data-campus-id");
+                    navigateTo("page4");
+                });
+            });
+
+           // Handle issue selection
+            document.querySelectorAll(".option").forEach(option => {
+                option.addEventListener("click", function () {
+                    // Remove active class from all options
+                    document.querySelectorAll(".option").forEach(item => {
+                        item.classList.remove("active");
+                    });
+
+                    // Add active class to the clicked option
+                    this.classList.add("active");
+
+                    // Set the selected issue ID in the hidden input
+                    document.getElementById("issue").value = this.getAttribute("data-issue-id");
+
+                    // Navigate to the next page
+                    navigateTo("page5");
+                });
+            });
+
+
+        });
+
+    </script>
+
+<script>
+    // Webcam functionality integration
+    document.addEventListener("DOMContentLoaded", function () {
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const captureButton = document.getElementById("capture-button");
+        const faceImageInput = document.getElementById("face_image_input");
+    
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => console.error("Camera error:", err));
+    
+        captureButton.addEventListener("click", () => {
+            const context = canvas.getContext("2d");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(blob => {
+                const file = new File([blob], "face.jpg", { type: "image/jpeg" });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                faceImageInput.files = dataTransfer.files;
+                alert("Face image captured successfully!");
+            }, "image/jpeg");
+        });
+    });
+    </script>
+    
+
+
+</body>
+</html>
